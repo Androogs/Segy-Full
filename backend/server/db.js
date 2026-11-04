@@ -60,6 +60,22 @@ const CONFIG_DEFAULT = {
     voz: true,                       // permite dictar por voz (reconocimiento del navegador) y leer respuestas
     nombre: 'Astro',
   },
+  // Tienda web pública (ver docs/TIENDA.md). Se edita desde el panel en Tienda web › Ajustes.
+  tienda: {
+    activa: true,
+    url_tienda: '',                  // dirección pública de la tienda (https://segy.com.co): botón "Ver tienda" y enlaces de seguimiento
+    publicar_por_defecto: true,      // productos activos con precio aparecen en la página salvo que se oculten uno a uno
+    mostrar_agotados: true,          // se muestran como "Agotado" (con opción de avisar por WhatsApp) en vez de ocultarse
+    whatsapp: '',                    // vacío = se usa el teléfono del negocio
+    horario: '',
+    mapa_url: '',
+    mensajes_barra: ['Paga a cuotas con crédito SEGY', 'Recibimos tu celular como parte de pago', 'Garantía y soporte en Palmira'],
+    envio: { local_nombre: 'Domicilio en Palmira', local_costo: null, nacional: true, nacional_costo: null, gratis_desde: null }, // null = se confirma con el cliente
+    pagos: ['transferencia', 'contraentrega', 'tienda', 'credito'],
+    credito: { activo: true, cuota_inicial_min_pct: 30, planes: [{ cuotas: 3, interes_pct: 0 }, { cuotas: 6, interes_pct: 0 }, { cuotas: 12, interes_pct: 0 }] }, // interes_pct = % total sobre el saldo, como en Créditos
+    producto_insignia_id: null,      // producto de la experiencia 3D del inicio; null = el primero llamado "iPhone 17 Pro Max"
+    redes: { instagram: '', facebook: '', tiktok: '' },
+  },
   // Remuneración: salario y comisión por defecto para vendedores (cada usuario puede tener sus propios valores)
   comisiones: {
     salario_defecto: 3000000,

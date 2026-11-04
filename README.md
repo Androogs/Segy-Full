@@ -1,15 +1,18 @@
-# SEGY · Panel de gestión
+# SEGY · Panel de gestión y tienda web
 
 Sistema administrativo para el negocio de celulares y accesorios **SEGY**: inventario por lotes (FIFO / promedio), compras con lectura de facturas por IA, ventas, créditos y cartera, caja y gastos, contabilidad con TRM, celulares usados, comisiones, marketing y reportes (PDF / Excel).
 
-Versión 3.0 — proyecto separado en **backend** y **frontend**. El frontend es una aplicación **React + TypeScript** servida con **Vite**.
+Versión 3.1 — proyecto separado en **backend**, **frontend** (panel) y **tienda** (página pública). Panel y tienda son aplicaciones **React + TypeScript** servidas con **Vite**.
+
+La **tienda web** es la página del negocio para los clientes: catálogo conectado al inventario, ficha de producto, carrito y pedido, seguimiento del pedido, retoma, crédito con simulador y servicio técnico, con una experiencia 3D de desplazamiento para el producto insignia (iPhone 17 Pro Max). Los pedidos y solicitudes llegan al panel. Guía: **[docs/TIENDA.md](docs/TIENDA.md)**.
 
 ```
 segy-panel/
 ├── backend/     API REST · Node.js 22 + Express 5 + SQLite integrado (seguridad, datos, PDF, OCR)
-├── frontend/    Interfaz web · React 19 + TypeScript 5 + Vite 6
+├── frontend/    Panel de gestión · React 19 + TypeScript 5 + Vite 6
+├── tienda/      Tienda web pública · React 19 + TypeScript 5 + Vite 6 + three.js
 ├── docs/        Despliegue en Hostinger, seguridad y base de datos
-└── package.json Monorepo (npm workspaces): instala y ejecuta ambos con un solo comando
+└── package.json Monorepo (npm workspaces): instala y ejecuta todo con un solo comando
 ```
 
 ---
@@ -27,7 +30,7 @@ segy-panel/
 ## Probar en tu computador
 
 ```bash
-# 1. Instalar dependencias de backend y frontend (un solo comando, desde la raíz)
+# 1. Instalar dependencias de backend, panel y tienda (un solo comando, desde la raíz)
 npm install
 
 # 2. Configuración local del backend
@@ -36,11 +39,11 @@ cp backend/.env.development.example backend/.env      # Windows: copy backend\.e
 # 3. Base de datos con datos de demostración
 npm run seed
 
-# 4. Arrancar backend (API :3400) y frontend (Vite :5173) a la vez
+# 4. Arrancar backend (API :3400), panel (Vite :5173) y tienda (Vite :5174) a la vez
 npm run dev
 ```
 
-Abre **http://localhost:5173**. Vite recarga la interfaz al instante cuando guardas cambios y reenvía `/api` al backend.
+Abre el **panel en http://localhost:5173** y la **tienda en http://localhost:5174**. Vite recarga al instante cuando guardas cambios y reenvía `/api` al backend.
 
 | Usuario | Contraseña | Rol |
 |---|---|---|
@@ -55,9 +58,9 @@ Abre **http://localhost:5173**. Vite recarga la interfaz al instante cuando guar
 ### Probar la versión de producción en local
 
 ```bash
-npm run build     # verifica tipos (tsc) y compila el frontend en frontend/dist
-npm test          # 22 pruebas automáticas del backend
-npm start         # el backend sirve la API y el frontend compilado en http://localhost:3400
+npm run build     # verifica tipos (tsc) y compila el panel (frontend/dist) y la tienda (tienda/dist)
+npm test          # 29 pruebas automáticas del backend (incluida la tienda)
+npm start         # API + panel en http://localhost:3400 y tienda en http://tienda.localhost:3400
 ```
 
 ---
@@ -66,11 +69,12 @@ npm start         # el backend sirve la API y el frontend compilado en http://lo
 
 | Comando | Qué hace |
 |---|---|
-| `npm run dev` | Backend + frontend en modo desarrollo |
-| `npm run dev:backend` / `npm run dev:frontend` | Solo uno de los dos |
-| `npm run build` | Revisión de tipos + build optimizado del frontend |
-| `npm run typecheck` | Solo la revisión de tipos TypeScript |
-| `npm start` | Servidor de producción (API + frontend compilado) |
+| `npm run dev` | Backend + panel + tienda en modo desarrollo |
+| `npm run dev:backend` / `dev:frontend` / `dev:tienda` | Solo uno de ellos |
+| `npm run build` | Revisión de tipos + build optimizado del panel y de la tienda |
+| `npm run build:panel` / `build:tienda` | Solo uno de los dos builds |
+| `npm run typecheck` | Solo la revisión de tipos TypeScript (panel y tienda) |
+| `npm start` | Servidor de producción (API + panel + tienda compilados) |
 | `npm test` | Pruebas automáticas del backend |
 | `npm run check` | Verifica el entorno antes de publicar |
 | `npm run db:init` | Crea o actualiza la base de datos (nunca borra datos) |
@@ -122,6 +126,20 @@ public/               Iconos, manifiesto PWA y librería del escáner
 
 Ver **[frontend/README.md](frontend/README.md)** para el estado de la migración a React y cómo migrar cada pantalla.
 
+### Tienda web (`tienda/`)
+
+```
+src/
+  experiencia/        Experiencia 3D de desplazamiento del inicio (three.js, carga bajo demanda, respaldo 2D)
+  contenido/          Textos editables: producto insignia, servicios, legales
+  paginas/            Inicio, catálogo, producto, carrito, pagar, pedido, retoma, crédito, servicio técnico, visítanos
+  componentes/, lib/, estilos/
+```
+
+En el backend, `server/routes/tienda.js` y `server/services/tienda.js` exponen la API pública (`/api/publico/tienda`,
+sin sesión, con límites por IP) y la gestión del panel (`/api/tienda`, con permisos `tienda.*`). En producción el backend
+entrega la tienda en los dominios de `TIENDA_HOSTS` y el panel en los demás. Detalles en **[docs/TIENDA.md](docs/TIENDA.md)**.
+
 ---
 
 ## Publicar en Hostinger
@@ -137,5 +155,6 @@ Resumen: se publica como **Aplicación Node.js** (planes Business / Cloud) o en 
 | Comando de compilación | `npm run build` |
 | Archivo de entrada | `backend/server/index.js` |
 | Comando de inicio | `npm start` |
+| Variable para la tienda | `TIENDA_HOSTS=tudominio.com,www.tudominio.com` (el panel queda en otro subdominio, p. ej. `panel.tudominio.com`) |
 
-Más documentación: [Seguridad](docs/SEGURIDAD.md) · [Base de datos](docs/BASE-DE-DATOS.md) · [Cambios](CAMBIOS.md)
+Más documentación: [Tienda web](docs/TIENDA.md) · [Seguridad](docs/SEGURIDAD.md) · [Base de datos](docs/BASE-DE-DATOS.md) · [Cambios](CAMBIOS.md)

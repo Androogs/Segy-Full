@@ -14,6 +14,7 @@ import { PantallaHeredada } from './components/PantallaHeredada';
 import { Icono } from './components/Icono';
 import { Login } from './views/Login';
 import { Inicio } from './views/Inicio';
+import { Tienda } from './views/Tienda';
 import { $$, toast } from './legacy/ui.js';
 import { guiaBienvenida } from './legacy/ayuda.js';
 import { montarAsistente, desmontarAsistente } from './legacy/asistente.js';
@@ -60,7 +61,7 @@ function Panel() {
   } else if (sinAcceso) {
     contenido = <main id="vista" className="vista" aria-live="polite" />;
   } else if (vista.tipo === 'react') {
-    contenido = <main id="vista" className="vista" aria-live="polite"><Inicio key={ruta.hash} setTopbar={setTopbar} /></main>;
+    contenido = <main id="vista" className="vista" aria-live="polite">{vista.componente === 'tienda' ? <Tienda key={seccion} ruta={ruta} setTopbar={setTopbar} /> : <Inicio key={ruta.hash} setTopbar={setTopbar} />}</main>;
   } else {
     contenido = <PantallaHeredada key={seccion} cargar={vista.cargar} ruta={ruta} setTopbar={setTopbar} />;
   }

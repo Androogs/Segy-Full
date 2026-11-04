@@ -75,6 +75,10 @@ const config = Object.freeze({
   RAIZ,
   // Build de producción del frontend (React + Vite). Por defecto ../frontend/dist.
   FRONTEND_DIST: path.resolve(RAIZ, texto(env.FRONTEND_DIST, path.join('..', 'frontend', 'dist'))),
+  // Tienda web pública (React + Vite, carpeta tienda/). Se sirve en los dominios de TIENDA_HOSTS; el resto es el panel.
+  // En desarrollo, http://tienda.localhost:3400 muestra el build de la tienda (o usa Vite en http://localhost:5174).
+  TIENDA_DIST: path.resolve(RAIZ, texto(env.TIENDA_DIST, path.join('..', 'tienda', 'dist'))),
+  TIENDA_HOSTS: Object.freeze(texto(env.TIENDA_HOSTS, PRODUCCION ? '' : 'tienda.localhost').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean)),
   NODE_ENV,
   PRODUCCION,
   PRUEBAS,
@@ -138,6 +142,7 @@ function advertenciasProduccion() {
   if (!config.PRODUCCION) return avisos;
   if (!config.APP_URL) avisos.push('APP_URL no está definida: los enlaces compartidos (comprobantes, seguimiento web) usarán el dominio de la petición.');
   if (!config.COOKIE_SECURE) avisos.push('COOKIE_SECURE=false en producción: la cookie de sesión viajaría sin HTTPS. Actívalo en cuanto tengas SSL.');
+  if (!config.TIENDA_HOSTS.length && fs.existsSync(path.join(config.TIENDA_DIST, 'index.html'))) avisos.push('La tienda web está compilada pero TIENDA_HOSTS está vacío: defínelo (p. ej. segy.com.co,www.segy.com.co) para publicarla o despliégala como sitio estático.');
   if (config.DATA_DIR.startsWith(config.FRONTEND_DIST)) avisos.push('DATA_DIR está dentro de la carpeta pública del frontend: los datos podrían quedar expuestos. Muévelo fuera.');
   return avisos;
 }

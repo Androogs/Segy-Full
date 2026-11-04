@@ -1,19 +1,28 @@
 {
   "name": "segy-panel",
   "version": "3.0.0",
-  "description": "SEGY · Panel de gestión. Monorepo: backend (Express + SQLite) y frontend (React + TypeScript + Vite).",
+  "description": "SEGY · Panel de gestión y tienda web. Monorepo: backend (Express + SQLite), frontend del panel y tienda pública (React + TypeScript + Vite).",
   "private": true,
   "license": "UNLICENSED",
-  "engines": { "node": ">=22.13.0" },
-  "workspaces": ["backend", "frontend"],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "workspaces": [
+    "backend",
+    "frontend",
+    "tienda"
+  ],
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "dev:backend": "npm run dev -w backend",
     "dev:frontend": "npm run dev -w frontend",
-    "build": "npm run build -w frontend",
+    "dev:tienda": "npm run dev -w tienda",
+    "build": "npm run build -w frontend && npm run build -w tienda",
+    "build:panel": "npm run build -w frontend",
+    "build:tienda": "npm run build -w tienda",
     "start": "npm start -w backend",
     "test": "npm test -w backend",
-    "typecheck": "npm run typecheck -w frontend",
+    "typecheck": "npm run typecheck -w frontend && npm run typecheck -w tienda",
     "seed": "npm run seed -w backend",
     "db:init": "npm run db:init -w backend",
     "crear-admin": "npm run crear-admin -w backend",

@@ -187,3 +187,18 @@ Descarga periódicamente `/var/lib/segy/respaldos` y `/var/lib/segy/archivos` a 
 | El OCR / Astro dicen "no disponible" | Falta `ANTHROPIC_API_KEY` (opcional). |
 
 Comprobación rápida en el servidor: `npm run check`.
+
+---
+
+## Tienda web (página pública)
+
+La misma aplicación sirve también la tienda (`tienda/dist`, compilada por `npm run build`).
+
+1. En hPanel apunta el dominio de la tienda (por ejemplo `segy.com.co` y `www.segy.com.co`) a esta misma aplicación Node.js,
+   y deja el panel en un subdominio (por ejemplo `panel.segy.com.co`, que va en `APP_URL`).
+2. Agrega la variable `TIENDA_HOSTS=segy.com.co,www.segy.com.co` y reinicia la aplicación.
+3. En el panel, *Tienda web › Ajustes*, escribe la dirección de la tienda (`https://segy.com.co`) y el WhatsApp.
+
+Si prefieres publicar la tienda como sitio estático (por ejemplo en `public_html`), compílala con
+`VITE_SEGY_API=https://panel.segy.com.co npm run build -w tienda` y sube el contenido de `tienda/dist`.
+Detalles en [TIENDA.md](TIENDA.md).

@@ -6,6 +6,7 @@ import './styles/app.css';
 import './styles/marketing.css';
 import './styles/asistente.css';
 import './styles/inicio.css';
+import './styles/tienda.css';
 
 createRoot(document.getElementById('raiz')!).render(<StrictMode><App /></StrictMode>);
 

@@ -38,6 +38,7 @@ try {
 } catch (e) { mal(`Base de datos: ${e.message}`); }
 
 if (fs.existsSync(path.join(config.FRONTEND_DIST, 'index.html'))) ok(`Build del frontend presente (${config.FRONTEND_DIST})`);
+if (fs.existsSync(path.join(config.TIENDA_DIST, 'index.html'))) ok(`Build de la tienda web presente (${config.TIENDA_DIST}) · dominios: ${config.TIENDA_HOSTS.join(', ') || 'ninguno (define TIENDA_HOSTS o publícala como sitio estático)'}`);
 else (config.PRODUCCION ? mal : aviso)('Falta el build del frontend: ejecuta `npm run build` en la raíz del proyecto');
 for (const m of ['express', 'helmet', 'bcryptjs', 'express-rate-limit', 'pdfkit']) { try { require.resolve(m); } catch { mal(`Falta la dependencia ${m}: ejecuta npm install`); } }
 if (process.env.ANTHROPIC_API_KEY) ok('ANTHROPIC_API_KEY definida (OCR de facturas y asistente Astro activos)'); else aviso('ANTHROPIC_API_KEY no definida: el OCR y el asistente quedan desactivados (opcional)');

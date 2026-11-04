@@ -16,6 +16,9 @@ const log = require('./log');
 const PUBLIC_DIR = config.FRONTEND_DIST;
 const HAY_BUILD = fs.existsSync(path.join(PUBLIC_DIR, 'index.html'));
 const SCRIPT_SEGUIMIENTO = path.join(config.RAIZ, 'assets', 'segy-seguimiento.js');
+// Tienda web pública: build de tienda/ (Vite). Se entrega solo a los dominios de TIENDA_HOSTS.
+const TIENDA_DIR = config.TIENDA_DIST;
+const esTienda = (req) => config.TIENDA_HOSTS.length > 0 && config.TIENDA_HOSTS.includes(String(req.hostname || '').toLowerCase());
 
 // Rutas que reciben archivos en base64 (fotos, facturas, comprobantes): único lugar con cuerpo grande permitido.
 const RUTAS_ARCHIVOS = /^\/api\/(documentos|ventas|gastos|webhooks\/documentos|productos\/\d+\/fotos|usados\/\d+\/fotos|compras\/\d+\/pagos|creditos\/\d+\/abonos)\/?$/;
@@ -94,6 +97,9 @@ function crearApp() {
   // Marketing público (sin sesión): valida su propio token, limita por IP y acepta CORS. Debe ir antes de requiereAuth.
   const marketingRutas = require('./routes/marketing');
   app.use('/api/publico/marketing', marketingRutas.publico);
+  // Tienda web pública (catálogo, pedidos y solicitudes): sin sesión, con sus propios límites. Antes de requiereAuth.
+  const tiendaRutas = require('./routes/tienda');
+  app.use('/api/publico/tienda', tiendaRutas.publico);
   app.use('/api', auth.requiereAuth);
   app.use('/api', require('./routes/catalogo'));
   app.use('/api', require('./routes/operaciones'));
@@ -103,6 +109,7 @@ function crearApp() {
   app.use('/api', require('./routes/comisiones'));
   app.use('/api', marketingRutas.router);
   app.use('/api', require('./routes/asistente'));
+  app.use('/api', tiendaRutas.router);
   app.use('/api', (req, res) => res.status(404).json({ error: 'Ruta no encontrada', codigo: 'no_encontrado' }));
 
   app.use('/comprobante', require('./routes/comprobante'));
@@ -111,6 +118,25 @@ function crearApp() {
   app.get('/marketing/segy-seguimiento.js', (req, res) => {
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.type('application/javascript').sendFile(SCRIPT_SEGUIMIENTO);
+  });
+
+  // Tienda web: en sus dominios se sirve su propio build (misma política de caché que el panel) y su index.html para
+  // cualquier ruta de la aplicación (/producto/…, /catalogo/…). La API, /comprobante y /marketing siguen disponibles.
+  const estaticosTienda = express.static(TIENDA_DIR, {
+    index: false,
+    dotfiles: 'deny',
+    setHeaders: (res, p) => {
+      if (/[\\/]assets[\\/]/.test(p)) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      else res.setHeader('Cache-Control', 'no-cache');
+    },
+  });
+  app.use((req, res, next) => (esTienda(req) ? estaticosTienda(req, res, next) : next()));
+  app.get(/^\/(?!api\/|comprobante\/|marketing\/).*/, (req, res, next) => {
+    if (!esTienda(req)) return next();
+    res.setHeader('Cache-Control', 'no-cache');
+    const indice = path.join(TIENDA_DIR, 'index.html');
+    if (fs.existsSync(indice)) return res.sendFile(indice);
+    res.status(503).type('html').send('<!doctype html><meta charset="utf-8"><title>SEGY</title><body style="font-family:sans-serif;background:#080808;color:#fff;padding:40px"><h1>SEGY · Tienda web</h1><p>La tienda aún no está compilada. En desarrollo ábrela en <b>http://localhost:5174</b> (npm run dev); para producción ejecuta <b>npm run build</b>.</p></body>');
   });
 
   // Archivos estáticos del build de Vite: index.html y sw.js siempre se revalidan; /assets (con huella) se cachea un año.
@@ -156,7 +182,7 @@ function iniciar(puerto = config.PORT) {
   require('./arranque').preparar(db);
   const app = crearApp();
   const servidor = app.listen(puerto, config.HOST, () => {
-    log.info(`SEGY ${require('../package.json').version} escuchando en http://${config.HOST === '0.0.0.0' ? 'localhost' : config.HOST}:${puerto}`, { entorno: config.NODE_ENV, datos: config.DATA_DIR, interfaz: HAY_BUILD ? path.relative(config.RAIZ, PUBLIC_DIR) : 'vite (desarrollo)' });
+    log.info(`SEGY ${require('../package.json').version} escuchando en http://${config.HOST === '0.0.0.0' ? 'localhost' : config.HOST}:${puerto}`, { entorno: config.NODE_ENV, datos: config.DATA_DIR, interfaz: HAY_BUILD ? path.relative(config.RAIZ, PUBLIC_DIR) : 'vite (desarrollo)', tienda: config.TIENDA_HOSTS.length ? config.TIENDA_HOSTS.join(', ') : 'sin dominio' });
   });
   servidor.headersTimeout = 65000;
   servidor.requestTimeout = 120000;

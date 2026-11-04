@@ -1,5 +1,6 @@
 **/node_modules
 frontend/dist
+tienda/dist
 backend/data
 **/.env
 **/*.db

@@ -1,0 +1,17 @@
+/* Tienda web (views/Tienda.tsx): usa los componentes del panel; aquí solo lo propio de la pantalla. */
+.tw .pill .tw-n { margin-left: 4px; opacity: 0.7; font-variant-numeric: tabular-nums; }
+.tw .filtros .buscador { margin-left: auto; }
+.tw-tabla td { vertical-align: middle; }
+.tw-tabla tr.tw-oculto td { opacity: 0.55; }
+.tw-tabla tr.tw-oculto td:nth-child(5) { opacity: 1; }
+.tw-check { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; }
+.tw-antes { min-height: 34px; width: 130px; padding: 4px 10px; text-align: right; font-variant-numeric: tabular-nums; }
+.tw-enlace { color: var(--ink); display: inline-flex; align-items: center; gap: 4px; }
+.tw-enlace:hover { color: var(--accent-ink); }
+.tw-ajustes .card + .card { margin-top: 12px; }
+.tw-ajustes .card h2 { margin-bottom: 12px; }
+.tw-planes { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.tw-planes .row { align-items: flex-end; }
+.tw-planes .campo { width: 140px; margin-bottom: 8px; }
+@media (max-width: 699px) { .tw .filtros .buscador { margin-left: 0; max-width: none !important; } }
+.tw-grid > .card + .card { margin-top: 0; }

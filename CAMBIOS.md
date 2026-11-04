@@ -1,3 +1,13 @@
+# Cambios
+
+## Versión 3.1 · Tienda web pública conectada al panel
+- **Nuevo workspace `tienda/`** (React 19 + TypeScript + Vite 6 + three.js): la página del negocio para los clientes, con la identidad del panel (negro, carbón, blanco y el rojo SEGY reservado para la acción principal), el logo de la palmera y la mascota Astro.
+- **Experiencia 3D del inicio**: el producto insignia (iPhone 17 Pro Max) queda fijo en pantalla y, al desplazarse, gira y cambia de lado por seis capítulos (apertura, cámaras, rendimiento, pantalla, acabados y compra con precio, cuotas y disponibilidad reales). Carga diferida de three.js, respaldo en 2D sin WebGL y versión sin animación con "reducir movimiento". Equipo genérico de SEGY; admite un modelo GLB oficial con licencia.
+- **Tienda completa**: catálogo por grupos y categorías con búsqueda instantánea y filtros, ficha de producto con accesorios compatibles, carrito, pago en una página (recoger, domicilio o envío nacional; transferencia, contra entrega, pago en tienda o crédito SEGY; retoma opcional), seguimiento privado del pedido, retoma, simulador de crédito, servicio técnico, visítanos y textos legales.
+- **Backend**: API pública `/api/publico/tienda` (catálogo sin costos, fotos de productos publicados, pedidos y solicitudes con límites por IP) y API del panel `/api/tienda`. Tablas nuevas `tienda_productos`, `tienda_pedidos` y `tienda_pedido_items` (migración automática). Permisos `tienda.ver`, `tienda.gestionar` y `tienda.configurar`. El backend entrega la tienda en los dominios de `TIENDA_HOSTS`.
+- **Panel**: nueva sección *Gestión › Tienda web* (pedidos, productos en la web y ajustes). El Inicio avisa de pedidos web nuevos. Pedidos y solicitudes crean clientes potenciales (canal web) con su campaña UTM.
+- `npm run dev` arranca API, panel y tienda; `npm run build` compila ambos frontends. 7 pruebas nuevas (29 en total).
+
 # Cambios de la versión 2.0
 
 ## Errores críticos corregidos

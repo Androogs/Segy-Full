@@ -32,6 +32,7 @@ interface Panel {
   documentos_pendientes?: number;
   usados?: { pendientes_aprobacion: number; propios?: { numero: string; marca?: string; modelo?: string }[] };
   comisiones?: { alcance: string; vendedor?: { ventas: number; ingreso_neto: number; comision: number } };
+  tienda_web?: { nuevos: number; abiertos: { n: number; total: number } };
 }
 
 type Nivel = 'alta' | 'media' | 'info';
@@ -98,6 +99,7 @@ function calcularPendientes(d: Panel): Pendiente[] {
     if (estado.tiene('usados.aprobar') && d.usados.pendientes_aprobacion) lista.push({ nivel: 'media', icono: 'phone', titulo: plural(d.usados.pendientes_aprobacion, 'celular usado espera aprobación', 'celulares usados esperan aprobación'), detalle: 'Revisa la valoración y aprueba o rechaza', href: '#/usados' });
     else if ((d.usados.propios || []).length) lista.push({ nivel: 'info', icono: 'phone', titulo: plural(d.usados.propios!.length, 'recepción de usado en proceso', 'recepciones de usados en proceso'), detalle: d.usados.propios!.slice(0, 2).map((u) => [u.marca, u.modelo].filter(Boolean).join(' ') || u.numero).join(', '), href: '#/usados' });
   }
+  if (d.tienda_web && d.tienda_web.nuevos) lista.push({ nivel: 'alta', icono: 'globe', titulo: plural(d.tienda_web.nuevos, 'pedido web nuevo', 'pedidos web nuevos'), detalle: `Confírmalos por WhatsApp · ${plural(d.tienda_web.abiertos.n, 'pedido abierto', 'pedidos abiertos')} por ${fmt.cop(d.tienda_web.abiertos.total)}`, href: '#/tienda' });
   if (estado.tiene('caja.operar') && !estado.caja) lista.push({ nivel: 'info', icono: 'cash', titulo: 'La caja no se ha abierto', detalle: 'Ábrela para cuadrar el efectivo al final del día', href: '#/caja' });
   const orden: Record<Nivel, number> = { alta: 0, media: 1, info: 2 };
   return lista.sort((a, b) => orden[a.nivel] - orden[b.nivel]);
@@ -251,6 +253,8 @@ export function Inicio({ setTopbar }: { setTopbar: (t: Topbar) => void }) {
     setError(null); setDatos(null);
     try {
       const d = await api.get<Panel>('/api/analitica/panel?periodo=mes');
+      // Pedidos de la tienda web (si el usuario puede verlos); nunca bloquea el resto del Inicio.
+      if (estado.tieneAlguno('tienda.ver', 'tienda.gestionar', 'tienda.configurar')) d.tienda_web = await api.get<Panel['tienda_web']>('/api/tienda/resumen', { silencioso: true }).catch(() => undefined);
       if (!señal || señal.vivo) setDatos(d);
     } catch (e) {
       if (!señal || señal.vivo) setError((e as Error).message || 'Revisa tu conexión.');

@@ -43,6 +43,9 @@ const PERMISOS = [
   ['marketing.editar', 'Crear y editar campañas, métricas y atribuciones'],
   ['marketing.leads', 'Registrar y atender clientes potenciales'],
   ['marketing.configurar', 'Conectar plataformas publicitarias y el seguimiento web'],
+  ['tienda.ver', 'Ver pedidos de la tienda web'],
+  ['tienda.gestionar', 'Atender pedidos de la tienda web (cambiar estados, notas)'],
+  ['tienda.configurar', 'Publicar productos en la tienda web y editar sus ajustes'],
   ['asistente.usar', 'Usar el asistente Astro (consultas con IA sobre lo que el usuario puede ver)'],
   ['config.ver', 'Ver configuración'],
   ['config.editar', 'Editar configuración del negocio'],
@@ -55,19 +58,19 @@ const ROLES = {
   admin: { nombre: 'Administrador', permisos: ['*'] },
   vendedor: {
     nombre: 'Vendedor',
-    permisos: ['ventas.ver', 'ventas.crear', 'ventas.descuento', 'inventario.ver', 'clientes.ver', 'clientes.editar', 'creditos.ver', 'creditos.abonar', 'caja.ver', 'documentos.ver', 'usados.ver', 'usados.registrar', 'comisiones.ver_propias', 'marketing.leads', 'asistente.usar'],
+    permisos: ['ventas.ver', 'ventas.crear', 'ventas.descuento', 'inventario.ver', 'clientes.ver', 'clientes.editar', 'creditos.ver', 'creditos.abonar', 'caja.ver', 'documentos.ver', 'usados.ver', 'usados.registrar', 'comisiones.ver_propias', 'marketing.leads', 'tienda.ver', 'tienda.gestionar', 'asistente.usar'],
   },
   inventario: {
     nombre: 'Encargado de inventario',
-    permisos: ['inventario.ver', 'inventario.editar', 'inventario.cambiar_precio', 'inventario.ajustar', 'compras.ver', 'compras.crear', 'proveedores.ver', 'proveedores.editar', 'documentos.ver', 'documentos.procesar', 'reportes.ver', 'usados.ver', 'asistente.usar'],
+    permisos: ['inventario.ver', 'inventario.editar', 'inventario.cambiar_precio', 'inventario.ajustar', 'compras.ver', 'compras.crear', 'proveedores.ver', 'proveedores.editar', 'documentos.ver', 'documentos.procesar', 'reportes.ver', 'usados.ver', 'tienda.ver', 'tienda.configurar', 'asistente.usar'],
   },
   cajero: {
     nombre: 'Cajero',
-    permisos: ['ventas.ver', 'ventas.crear', 'ventas.devolver', 'inventario.ver', 'clientes.ver', 'clientes.editar', 'creditos.ver', 'creditos.abonar', 'caja.ver', 'caja.operar', 'caja.gastos', 'compras.pagar', 'compras.ver', 'proveedores.ver', 'usados.ver', 'usados.registrar', 'comisiones.ver_propias', 'marketing.leads', 'asistente.usar'],
+    permisos: ['ventas.ver', 'ventas.crear', 'ventas.devolver', 'inventario.ver', 'clientes.ver', 'clientes.editar', 'creditos.ver', 'creditos.abonar', 'caja.ver', 'caja.operar', 'caja.gastos', 'compras.pagar', 'compras.ver', 'proveedores.ver', 'usados.ver', 'usados.registrar', 'comisiones.ver_propias', 'marketing.leads', 'tienda.ver', 'tienda.gestionar', 'asistente.usar'],
   },
   consulta: {
     nombre: 'Contabilidad / consulta',
-    permisos: ['ventas.ver', 'compras.ver', 'inventario.ver', 'clientes.ver', 'proveedores.ver', 'creditos.ver', 'caja.ver', 'reportes.ver', 'documentos.ver', 'auditoria.ver', 'config.ver', 'contabilidad.ver', 'usados.ver', 'comisiones.ver', 'marketing.ver', 'asistente.usar'],
+    permisos: ['ventas.ver', 'compras.ver', 'inventario.ver', 'clientes.ver', 'proveedores.ver', 'creditos.ver', 'caja.ver', 'reportes.ver', 'documentos.ver', 'auditoria.ver', 'config.ver', 'contabilidad.ver', 'usados.ver', 'comisiones.ver', 'marketing.ver', 'tienda.ver', 'asistente.usar'],
   },
 };
 

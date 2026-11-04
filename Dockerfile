@@ -1,9 +1,11 @@
-# Opcional (VPS con Docker). Compila el frontend y ejecuta el backend con solo lo necesario.
+# Opcional (VPS con Docker). Compila el panel y la tienda web y ejecuta el backend con solo lo necesario.
+# La tienda se sirve en los dominios de TIENDA_HOSTS (docker run -e TIENDA_HOSTS=segy.com.co,www.segy.com.co …).
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
+COPY tienda/package.json tienda/
 RUN npm ci
 COPY . .
 RUN npm run build
@@ -16,6 +18,8 @@ COPY --from=build --chown=segy:segy /app/package*.json ./
 COPY --from=build --chown=segy:segy /app/backend ./backend
 COPY --from=build --chown=segy:segy /app/frontend/dist ./frontend/dist
 COPY --from=build --chown=segy:segy /app/frontend/package.json ./frontend/package.json
+COPY --from=build --chown=segy:segy /app/tienda/dist ./tienda/dist
+COPY --from=build --chown=segy:segy /app/tienda/package.json ./tienda/package.json
 RUN npm ci --omit=dev -w backend --include-workspace-root=false && npm cache clean --force
 USER segy
 EXPOSE 3400

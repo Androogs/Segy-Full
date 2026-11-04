@@ -3,7 +3,7 @@
 import type { ModuloVista } from './tipos';
 
 type Cargador = () => Promise<ModuloVista>;
-export type Vista = { tipo: 'react'; componente: 'inicio' } | { tipo: 'heredada'; cargar: Cargador };
+export type Vista = { tipo: 'react'; componente: 'inicio' | 'tienda' } | { tipo: 'heredada'; cargar: Cargador };
 
 const h = (cargar: Cargador): Vista => ({ tipo: 'heredada', cargar });
 
@@ -25,6 +25,7 @@ export const VISTAS: Record<string, Vista> = {
   contabilidad: h(() => import('../legacy/views/contabilidad.js')),
   marketing: h(() => import('../legacy/views/marketing.js')),
   configuracion: h(() => import('../legacy/views/configuracion.js')),
+  tienda: { tipo: 'react', componente: 'tienda' },
 };
 
 // "Mi cuenta" (#/configuracion/cuenta) es de todo usuario autenticado aunque no vea Configuración.

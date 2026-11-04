@@ -1,0 +1,109 @@
+/* ---------- Experiencia del producto insignia (inicio) ---------- */
+.exp { position: relative; background: var(--noche); margin-top: calc(-1 * var(--alto-cab)); } /* el escenario pasa por debajo del encabezado translúcido */
+.exp__escenario { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate; }
+
+/* Fondos por capítulo: se mezclan según el avance (opacidad desde JS). */
+.exp__fondos, .exp__fondo { position: absolute; inset: 0; pointer-events: none; }
+.exp__fondo { opacity: 0; will-change: opacity; }
+.exp__fondo--apertura { background: radial-gradient(52% 48% at 50% 56%, rgba(255, 8, 8, 0.34), rgba(255, 8, 8, 0.06) 55%, transparent 75%), var(--noche); }
+.exp__fondo--camaras { background: radial-gradient(45% 60% at 70% 50%, rgba(255, 255, 255, 0.07), transparent 70%), linear-gradient(90deg, #0b0b0b, #121212); }
+.exp__fondo--rendimiento { background: radial-gradient(42% 55% at 28% 52%, rgba(255, 8, 8, 0.22), transparent 70%), #0a0a0a; }
+.exp__fondo--pantalla { background: radial-gradient(40% 60% at 70% 50%, rgba(255, 90, 40, 0.18), transparent 72%), radial-gradient(30% 40% at 72% 60%, rgba(140, 60, 255, 0.12), transparent 70%), #080808; }
+.exp__fondo--colores { background: radial-gradient(46% 62% at 72% 50%, color-mix(in srgb, var(--tinte, #34415f) 45%, transparent), transparent 72%), #0a0a0a; transition: background 0.6s; }
+.exp__fondo--compra { background: radial-gradient(42% 58% at 28% 55%, rgba(255, 8, 8, 0.2), transparent 70%), var(--noche); }
+
+/* Titular gigante detrás del equipo: la tipografía es parte de la imagen. */
+.exp__titular {
+  position: absolute; left: 0; right: 0; top: 50%; margin-top: calc(var(--alto-cab) / 2); translate: 0 -50%; z-index: 1; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; text-align: center; will-change: transform, opacity;
+  font-family: var(--display); font-stretch: 125%; font-weight: 900; font-size: clamp(3.5rem, 13.5vw, 15rem); line-height: 0.84; letter-spacing: -0.05em; color: var(--tiza);
+}
+.exp__titular span { white-space: nowrap; }
+.exp__titular span:last-child { color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85); }
+
+.exp__lienzo { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 0.6s; }
+.exp--3d .exp__lienzo { opacity: 1; }
+.exp__equipo-2d { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none; perspective: 1400px; transition: opacity 0.4s; }
+.exp--3d .exp__equipo-2d { opacity: 0; }
+.poster { position: relative; height: 58.37vh; height: 58.37svh; aspect-ratio: 390 / 815; transform-style: preserve-3d; will-change: transform; }
+.poster__cara { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.6)); }
+.poster__cara--atras { transform: rotateY(180deg); }
+
+/* Barra de avance (siempre) y riel de capítulos (escritorio). */
+.exp__progreso { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; z-index: 4; background: rgba(255, 255, 255, 0.06); }
+.exp__progreso div { height: 100%; background: var(--rojo); transform-origin: 0 50%; transform: scaleX(0); }
+.exp__riel { position: absolute; right: clamp(12px, 2vw, 32px); top: 50%; translate: 0 -50%; margin-top: calc(var(--alto-cab) / 2); z-index: 5; }
+.exp__riel ol { list-style: none; display: grid; gap: 4px; }
+.exp__riel button { display: flex; align-items: center; gap: 10px; border: 0; background: none; cursor: pointer; padding: 6px 4px; color: var(--ceniza); font-size: 12px; font-weight: 600; flex-direction: row-reverse; }
+.exp__riel-num { font-family: var(--display); font-stretch: 112%; font-variant-numeric: tabular-nums; width: 24px; text-align: right; }
+.exp__riel-nombre { opacity: 0; translate: 6px 0; transition: opacity 0.2s, translate 0.2s var(--curva); white-space: nowrap; }
+.exp__riel button:hover .exp__riel-nombre, .exp__riel button:focus-visible .exp__riel-nombre, .exp__riel button[aria-current] .exp__riel-nombre { opacity: 1; translate: 0 0; }
+.exp__riel button[aria-current] { color: var(--tiza); }
+.exp__riel button[aria-current] .exp__riel-num { color: var(--rojo); }
+@media (max-width: 900px) { .exp__riel { display: none; } }
+
+/* Capítulos */
+.exp__cap { position: absolute; z-index: 3; will-change: opacity, transform; }
+.exp__cap--izquierda { left: var(--margen); top: 50%; margin-top: calc(var(--alto-cab) / 2); translate: 0 -50%; width: min(460px, 38vw); }
+.exp__cap--derecha { right: calc(var(--margen) + 136px); top: 50%; margin-top: calc(var(--alto-cab) / 2); translate: 0 -50%; width: min(440px, 38vw); }
+.exp__cap--centro { left: var(--margen); right: calc(var(--margen) + 200px); bottom: calc(clamp(24px, 5vh, 56px) + var(--alto-barra)); }
+.exp__texto .titulo-1 { font-size: clamp(2.5rem, 1.4rem + 3.4vw, 4.75rem); margin-bottom: 18px; }
+.exp__datos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 28px 0 0; padding-top: 22px; border-top: 1px solid var(--linea-2); }
+.exp__datos dt { font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem); }
+.exp__datos dd { margin: 6px 0 0; color: var(--niebla); font-size: var(--t-1); }
+
+.exp__apertura { display: flex; justify-content: space-between; align-items: end; gap: 20px 40px; flex-wrap: wrap; }
+.exp__bajada { max-width: 42ch; color: var(--niebla); font-size: var(--t-3); }
+.exp__desliza { display: inline-flex; align-items: center; gap: 12px; color: var(--ceniza); font-size: var(--t-1); }
+.exp__desliza::before { content: ''; width: 1px; height: 28px; background: linear-gradient(var(--tiza), transparent); animation: desliza 1.8s ease-in-out infinite; }
+@keyframes desliza { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+.exp__acabados { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 14px; }
+.exp__muestra { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 8px; border-radius: 999px; border: 1px solid var(--linea-2); background: rgba(8, 8, 8, 0.4); cursor: pointer; font-weight: 500; font-size: var(--t-1); transition: border-color 0.15s, background 0.15s; }
+.exp__muestra i { width: 28px; height: 28px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25); }
+.exp__muestra:hover { border-color: #666; }
+.exp__muestra[aria-checked='true'] { border-color: var(--tiza); background: var(--carbon); }
+
+/* Tarjeta de compra (último capítulo) */
+.compra { background: rgba(23, 23, 23, 0.82); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--linea); border-radius: var(--r-4); padding: clamp(22px, 2.4vw, 32px); display: grid; gap: 14px; }
+.compra__nombre { font-family: var(--display); font-stretch: 110%; font-weight: 700; font-size: var(--t-4); line-height: 1.15; }
+.compra__precio { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.compra__precio .precio { font-size: clamp(2.25rem, 1.6rem + 2vw, 3.25rem); font-stretch: 108%; line-height: 1; }
+.compra__cuota { color: var(--niebla); font-size: var(--t-1); }
+.compra__cuota strong { color: var(--tiza); }
+.compra__acciones { display: grid; gap: 10px; margin-top: 6px; }
+.compra__extras { list-style: none; display: grid; gap: 4px; border-top: 1px solid var(--linea); padding-top: 12px; }
+.compra__extras a { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: var(--niebla); font-size: var(--t-1); }
+.compra__extras a:hover { color: var(--tiza); }
+.compra__extras svg { width: 18px; height: 18px; }
+
+/* Celular: equipo arriba, texto abajo sobre un velo para que siempre se lea. */
+@media (max-width: 759px) {
+  .exp__titular { top: 24%; font-size: clamp(3rem, 17vw, 6rem); }
+  html[data-experiencia] .astro-flotante { opacity: 0; pointer-events: none; transform: translateY(12px); }
+  .exp__cap--izquierda, .exp__cap--derecha, .exp__cap--centro { left: var(--margen); right: var(--margen); top: auto; bottom: 0; translate: none; margin: 0; width: auto; padding: 48px 0 calc(20px + env(safe-area-inset-bottom)); }
+  .exp__cap--izquierda::before, .exp__cap--derecha::before { content: ''; position: absolute; inset: -20px calc(-1 * var(--margen)) 0; background: linear-gradient(to top, rgba(8, 8, 8, 0.96) 55%, rgba(8, 8, 8, 0)); z-index: -1; }
+  .exp__texto .titulo-1 { font-size: clamp(2rem, 9vw, 2.75rem); margin-bottom: 10px; }
+  .exp__texto .entrada { font-size: var(--t-2); }
+  .exp__datos { margin-top: 16px; padding-top: 14px; }
+  .exp__datos dt { font-size: 1.5rem; }
+  .compra { padding: 18px; gap: 10px; }
+  .compra__extras { display: none; }
+  .compra .boton--grande { min-height: 50px; }
+  .poster { height: 44vh; height: 44svh; }
+  .exp__cap--centro { padding-bottom: calc(20px + var(--alto-barra) + env(safe-area-inset-bottom)); }
+  .exp__apertura .fila { width: 100%; }
+}
+
+/* Reducir movimiento: capítulos como secciones normales con el equipo en 2D al lado. */
+.exp--estatica { margin-top: 0; }
+.exp--estatica .exp__escenario { position: relative; height: auto; overflow: visible; }
+.exp--estatica .exp__fondos, .exp--estatica .exp__lienzo, .exp--estatica .exp__equipo-2d, .exp--estatica .exp__progreso { display: none; }
+.exp--estatica .exp__titular { position: relative; top: auto; translate: none; margin: 0; padding: 96px var(--margen) 24px; }
+.exp--estatica .exp__cap { position: relative; inset: auto; translate: none; margin: 0 auto; width: auto; max-width: calc(var(--ancho) + 2 * var(--margen)); padding: 48px var(--margen); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr); gap: 40px; align-items: center; border-top: 1px solid var(--linea); }
+.exp--estatica .exp__cap--apertura { display: block; border-top: 0; }
+.exp--estatica .exp__cap::before { display: none; }
+.exp--estatica .exp__equipo-estatico { display: grid; place-items: center; }
+.exp--estatica .exp__equipo-estatico .poster { height: 420px; }
+.exp--estatica .exp__cap--camaras .poster, .exp--estatica .exp__cap--colores .poster { transform: rotateY(180deg); }
+@media (max-width: 759px) { .exp--estatica .exp__cap { grid-template-columns: minmax(0, 1fr); } .exp--estatica .exp__equipo-estatico .poster { height: 320px; } }

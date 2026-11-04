@@ -9,7 +9,7 @@ export interface Modulo { ruta: string; nombre: string; icono: string; descripci
 export const GRUPOS: Grupo[] = [
   { clave: 'principal', nombre: null, orden: ['inicio', 'graficas', 'vender', 'inventario', 'compras', 'clientes', 'creditos'] },
   { clave: 'finanzas', nombre: 'Finanzas', orden: ['caja', 'comisiones', 'contabilidad'] },
-  { clave: 'gestion', nombre: 'Gestión', orden: ['reportes', 'usados', 'proveedores', 'marketing', 'configuracion'] },
+  { clave: 'gestion', nombre: 'Gestión', orden: ['reportes', 'usados', 'proveedores', 'marketing', 'tienda', 'configuracion'] },
 ];
 
 export const MODULOS: Modulo[] = [
@@ -26,6 +26,7 @@ export const MODULOS: Modulo[] = [
   { ruta: 'comisiones', nombre: 'Rentabilidad y comisiones', icono: 'dollar', descripcion: 'Ganancia por venta, salario y comisiones', permiso: ['comisiones.ver_propias', 'comisiones.ver', 'comisiones.administrar'], grupo: 'finanzas' },
   { ruta: 'contabilidad', nombre: 'Contabilidad y TRM', icono: 'book', descripcion: 'Información financiera y dólar', permiso: ['contabilidad.ver'], grupo: 'finanzas' },
   { ruta: 'marketing', nombre: 'Marketing', icono: 'megaphone', descripcion: 'Campañas, clientes potenciales y resultados', permiso: ['marketing.ver', 'marketing.editar', 'marketing.leads'], grupo: 'gestion' },
+  { ruta: 'tienda', nombre: 'Tienda web', icono: 'globe', descripcion: 'Pedidos y productos de la página web', permiso: ['tienda.ver', 'tienda.gestionar', 'tienda.configurar'], grupo: 'gestion' },
   { ruta: 'reportes', nombre: 'Reportes', icono: 'file', descripcion: 'Descargar informes en Excel y PDF', permiso: ['reportes.ver'], grupo: 'gestion' },
   { ruta: 'configuracion', nombre: 'Configuración', icono: 'settings', descripcion: 'Negocio, usuarios y preferencias', permiso: ['config.ver', 'usuarios.administrar'], grupo: 'gestion' },
 ];

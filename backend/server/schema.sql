@@ -822,3 +822,63 @@ CREATE TABLE IF NOT EXISTS asistente_mensajes (
   creado_en       TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_asistente_mensajes ON asistente_mensajes(conversacion_id);
+
+-- ---------------------------------------------------------------- Tienda web (página pública del negocio)
+-- Qué se publica del inventario. Sin fila = se aplica la regla general (configuración tienda.publicar_por_defecto).
+CREATE TABLE IF NOT EXISTS tienda_productos (
+  producto_id    INTEGER PRIMARY KEY REFERENCES productos(id) ON DELETE CASCADE,
+  publicado      INTEGER NOT NULL DEFAULT 1,
+  destacado      INTEGER NOT NULL DEFAULT 0,
+  orden          INTEGER NOT NULL DEFAULT 0,
+  precio_antes   INTEGER,
+  resumen        TEXT,
+  actualizado_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+-- Pedidos hechos desde la página. No descuentan inventario: el equipo los confirma y registra la venta en Ventas.
+CREATE TABLE IF NOT EXISTS tienda_pedidos (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  numero         TEXT    NOT NULL UNIQUE,
+  token          TEXT    NOT NULL UNIQUE,
+  fecha          TEXT    NOT NULL,
+  estado         TEXT    NOT NULL DEFAULT 'nuevo',
+  nombre         TEXT    NOT NULL,
+  telefono       TEXT    NOT NULL,
+  email          TEXT,
+  documento      TEXT,
+  entrega        TEXT    NOT NULL DEFAULT 'recoger',
+  ciudad         TEXT,
+  direccion      TEXT,
+  barrio         TEXT,
+  pago           TEXT    NOT NULL DEFAULT 'transferencia',
+  credito_cuotas INTEGER,
+  subtotal       INTEGER NOT NULL DEFAULT 0,
+  envio          INTEGER NOT NULL DEFAULT 0,
+  envio_por_confirmar INTEGER NOT NULL DEFAULT 0,
+  total          INTEGER NOT NULL DEFAULT 0,
+  notas          TEXT,
+  retoma         TEXT,
+  notas_internas TEXT,
+  venta_numero   TEXT,
+  visitante      TEXT,
+  utm_source     TEXT,
+  utm_medium     TEXT,
+  utm_campaign   TEXT,
+  campana_id     INTEGER,
+  lead_id        INTEGER,
+  historial      TEXT,
+  actualizado_en TEXT,
+  creado_en      TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS ix_tienda_pedidos_estado ON tienda_pedidos(estado, fecha);
+
+CREATE TABLE IF NOT EXISTS tienda_pedido_items (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  pedido_id   INTEGER NOT NULL REFERENCES tienda_pedidos(id) ON DELETE CASCADE,
+  producto_id INTEGER NOT NULL REFERENCES productos(id),
+  nombre      TEXT    NOT NULL,
+  precio      INTEGER NOT NULL DEFAULT 0,
+  cantidad    INTEGER NOT NULL DEFAULT 1,
+  total       INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS ix_tienda_pedido_items ON tienda_pedido_items(pedido_id);
