@@ -43,7 +43,7 @@ export function Inicio() {
             {grupos.map((g) => (
               <Enlace key={g.clave} a={`/catalogo/${g.clave}`} className="categoria">
                 <div><h3>{g.nombre}</h3><p>{g.descripcion}</p></div>
-                <VisualProducto producto={{ nombre: MUESTRA[g.clave].nombre, grupo: g.clave, categoria: { id: 0, nombre: MUESTRA[g.clave].categoria }, color: MUESTRA[g.clave].color }} />
+                <VisualProducto producto={{ nombre: MUESTRA[g.clave].nombre, grupo: g.clave, categoria: { id: 0, nombre: MUESTRA[g.clave].categoria }, color: MUESTRA[g.clave].color }} foto={g.foto} />
                 <div className="categoria__pie"><span>{plural(g.total, 'producto', 'productos')}</span><span className="categoria__flecha"><Icono nombre="derecha" /></span></div>
               </Enlace>
             ))}

@@ -35,7 +35,7 @@ export interface ProductoDetalle extends ProductoResumen {
 }
 
 export interface CategoriaCatalogo { id: number; nombre: string; total: number }
-export interface GrupoCatalogo { clave: Grupo; nombre: string; descripcion: string; total: number; categorias: CategoriaCatalogo[] }
+export interface GrupoCatalogo { clave: Grupo; nombre: string; descripcion: string; total: number; categorias: CategoriaCatalogo[]; foto?: string | null }
 
 export interface Negocio {
   nombre: string;

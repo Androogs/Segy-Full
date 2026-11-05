@@ -69,7 +69,7 @@ const CONFIG_DEFAULT = {
     whatsapp: '',                    // vacío = se usa el teléfono del negocio
     horario: '',
     mapa_url: '',
-    mensajes_barra: ['Paga a cuotas con crédito SEGY', 'Recibimos tu celular como parte de pago', 'Garantía y soporte en Palmira'],
+    mensajes_barra: ['Domicilio Gratis en Palmira', 'Paga a cuotas con crédito SEGY', 'Recibimos tu celular como parte de pago', 'Garantía y soporte en Palmira'],
     envio: { local_nombre: 'Domicilio en Palmira', local_costo: null, nacional: true, nacional_costo: null, gratis_desde: null }, // null = se confirma con el cliente
     pagos: ['transferencia', 'contraentrega', 'tienda', 'credito'],
     credito: { activo: true, cuota_inicial_min_pct: 30, planes: [{ cuotas: 3, interes_pct: 0 }, { cuotas: 6, interes_pct: 0 }, { cuotas: 12, interes_pct: 0 }] }, // interes_pct = % total sobre el saldo, como en Créditos

@@ -48,11 +48,14 @@ export const INSIGNIA = {
     { clave: 'compra', nombre: 'Comprar', titulo: 'Llévatelo hoy', texto: '', lado: 'derecha', pantalla: 'bloqueo' },
   ] as Capitulo[],
   acabados: [
+    { nombre: 'Plata', marco: '#b9bcc2', espalda: '#d9dadd', muestra: '#dcdde0' },
     { nombre: 'Azul profundo', marco: '#2b3650', espalda: '#34415f', muestra: '#34415f' },
     { nombre: 'Naranja cósmico', marco: '#b5582c', espalda: '#cf6a37', muestra: '#d8743f' },
-    { nombre: 'Plata', marco: '#b9bcc2', espalda: '#d9dadd', muestra: '#dcdde0' },
   ] as Acabado[],
   capacidades: ['256 GB', '512 GB', '1 TB', '2 TB'],
-  // Modelo 3D oficial (opcional). Mientras url sea null se muestra el equipo genérico de SEGY. Ver public/media/LEEME.md.
-  modelo3d: { url: null as string | null, escala: 1, rotacionInicial: [0, 0, 0] as [number, number, number] },
+  // Modelo 3D del producto: «iPhone 17 Pro Max» de MajdyModels (Sketchfab, licencia CC BY 4.0, crédito en el pie de página).
+  // Descarga y colocación del archivo: public/media/LEEME.md. La escena le oculta la manzana, le pega la palmera de
+  // SEGY en la espalda y le conecta la pantalla viva (ver src/experiencia/externo.ts). Si el archivo falta o falla al
+  // cargar, la portada vuelve sola al equipo genérico de SEGY.
+  modelo3d: { url: '/media/iphone-17-pro-max/scene.gltf' as string | null, escala: 1, rotacionInicial: [0, 0, 0] as [number, number, number] },
 };

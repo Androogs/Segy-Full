@@ -1,5 +1,5 @@
 /* ---------- Barra de mensajes ---------- */
-.barra-mensajes { height: var(--alto-barra); background: var(--carbon); border-bottom: 1px solid var(--linea); display: grid; place-items: center; overflow: hidden; font-size: var(--t-1); color: var(--niebla); }
+.barra-mensajes { height: var(--alto-barra); background: var(--rojo); border-bottom: 1px solid rgba(0, 0, 0, 0.35); display: grid; place-items: center; overflow: hidden; font-size: var(--t-1); font-weight: 600; color: var(--tiza); }
 .barra-mensajes p { animation: entraMensaje 0.5s var(--curva); padding: 0 16px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 @keyframes entraMensaje { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
@@ -7,22 +7,22 @@
 .cab { position: sticky; top: 0; z-index: 60; height: var(--alto-cab); background: rgba(8, 8, 8, 0.82); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
 .cab__dentro { height: 100%; display: flex; align-items: center; gap: 24px; }
 .cab__marca { display: flex; align-items: center; flex-shrink: 0; }
-.cab__marca img { height: 46px; width: auto; }
-.cab__nav { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; }
-.cab__nav > a, .cab__nav > .cab__menu > a { display: inline-flex; align-items: center; height: 40px; padding: 0 12px; border-radius: var(--r-pill, 999px); color: var(--niebla); font-size: var(--t-1); font-weight: 500; white-space: nowrap; transition: color 0.15s, background 0.15s; }
+.cab__marca img { height: 56px; width: auto; }
+.cab__nav { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
+.cab__nav > a, .cab__nav > .cab__menu > a { display: inline-flex; align-items: center; height: 46px; padding: 0 16px; border-radius: var(--r-pill, 999px); color: var(--niebla); font-size: 0.9375rem; font-weight: 600; white-space: nowrap; transition: color 0.15s, background 0.15s; }
 .cab__nav > a:hover, .cab__nav > .cab__menu:hover > a, .cab__nav > .cab__menu:focus-within > a { color: var(--tiza); background: var(--carbon); }
 .cab__nav a[aria-current='page'] { color: var(--tiza); }
 .cab__acciones { display: flex; align-items: center; gap: 4px; margin-left: auto; }
-.cab__icono { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; cursor: pointer; color: var(--tiza); }
+.cab__icono { position: relative; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 0; background: transparent; cursor: pointer; color: var(--tiza); }
 .cab__icono:hover { background: var(--carbon); }
-.cab__icono svg { width: 22px; height: 22px; }
+.cab__icono svg { width: 24px; height: 24px; }
 .cab__contador { position: absolute; top: 4px; right: 2px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: var(--rojo); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; border: 2px solid var(--noche); }
 .cab__hamburguesa { display: none; }
 @media (max-width: 1080px) {
   .cab__nav { display: none; }
   .cab__hamburguesa { display: grid; }
   .cab__dentro { gap: 8px; }
-  .cab__marca img { height: 40px; }
+  .cab__marca img { height: 46px; }
 }
 
 /* Menú desplegable de accesorios (a la manera de un "mega menú" compacto) */
@@ -38,7 +38,7 @@
 /* Menú del celular */
 .menu-movil { position: fixed; inset: 0; z-index: 120; background: var(--noche); display: flex; flex-direction: column; animation: aparece 0.2s ease-out; }
 .menu-movil__cab { height: var(--alto-cab); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--margen); border-bottom: 1px solid var(--linea); }
-.menu-movil__cab img { height: 40px; }
+.menu-movil__cab img { height: 46px; }
 .menu-movil nav { flex: 1; overflow-y: auto; padding: 16px var(--margen) 32px; display: flex; flex-direction: column; }
 .menu-movil nav a { font-family: var(--display); font-stretch: 112%; font-weight: 700; font-size: 1.75rem; letter-spacing: -0.02em; padding: 10px 0; border-bottom: 1px solid var(--linea); display: flex; justify-content: space-between; align-items: baseline; }
 .menu-movil nav a small { font-family: var(--texto); font-size: var(--t-1); font-weight: 500; color: var(--ceniza); letter-spacing: 0; }
@@ -96,7 +96,7 @@
 
 /* ---------- Visual de producto ---------- */
 .visual { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 50% 100%, #1f1f1f 0%, var(--carbon) 55%, #121212 100%); display: grid; place-items: center; }
-.visual img.foto { width: 100%; height: 100%; object-fit: contain; }
+.visual img.foto { width: 92%; height: 92%; object-fit: contain; }
 .visual svg { width: 78%; height: 78%; }
 
 /* ---------- Tarjeta de producto ---------- */

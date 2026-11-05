@@ -1,10 +1,11 @@
 // Escena 3D de la portada (three.js). Se carga bajo demanda (import dinámico) cuando la experiencia entra en pantalla.
 // Iluminación de estudio con reflejos (RoomEnvironment) y una luz de contorno en rojo SEGY que dibuja el borde del equipo.
 import {
-  ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, PMREMGenerator, PerspectiveCamera, Scene, Vector3, WebGLRenderer, type Object3D,
+  ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, Mesh, PMREMGenerator, PerspectiveCamera, Scene, Vector3, WebGLRenderer, type Object3D,
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { crearDispositivo, ALTO, type Dispositivo } from './dispositivo';
+import { calcomaniaPalmera, prepararExterno, type ExternoPrep } from './externo';
 import type { ModoPantalla } from './pantalla';
 import type { Pose } from './coreografia';
 
@@ -57,6 +58,7 @@ export async function crearEscena(lienzo: HTMLCanvasElement, opciones: OpcionesE
   const generico: Dispositivo = crearDispositivo();
   giro.add(generico.grupo);
   let externo: Object3D | null = null;
+  let prep: ExternoPrep | null = null;
 
   // Modelo oficial opcional (GLB con licencia). Si falla, se queda el genérico.
   const m = opciones.modelo;
@@ -65,6 +67,7 @@ export async function crearEscena(lienzo: HTMLCanvasElement, opciones: OpcionesE
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
       const gltf = await new GLTFLoader().loadAsync(m.url);
       const obj = gltf.scene;
+      prep = prepararExterno(obj); // sin la manzana: se oculta y va la palmera de SEGY
       const caja = new Box3().setFromObject(obj);
       const tam = caja.getSize(new Vector3());
       const centro = caja.getCenter(new Vector3());
@@ -73,8 +76,11 @@ export async function crearEscena(lienzo: HTMLCanvasElement, opciones: OpcionesE
       envoltura.add(obj);
       envoltura.scale.setScalar((ALTO / Math.max(tam.y, 1e-6)) * (m.escala || 1));
       envoltura.rotation.set(...m.rotacionInicial);
+      envoltura.updateWorldMatrix(true, true);
+      const palmera = await calcomaniaPalmera(new Box3().setFromObject(envoltura));
       giro.remove(generico.grupo);
       giro.add(envoltura);
+      if (palmera) giro.add(palmera);
       externo = envoltura;
     } catch (e) {
       console.warn('[SEGY] No se pudo cargar el modelo 3D; se usa el equipo genérico.', e);
@@ -103,10 +109,15 @@ export async function crearEscena(lienzo: HTMLCanvasElement, opciones: OpcionesE
       inclinacion.scale.setScalar(pose.s);
       renderer.render(escena, camara);
     },
-    acabado(marco, espalda) { generico.fijarAcabado(marco, espalda); },
-    pantalla(modo, tinte = null) { if (!externo) generico.fijarPantalla(modo, tinte); },
+    acabado(marco, espalda) { generico.fijarAcabado(marco, espalda); prep?.fijarAcabado(marco, espalda); },
+    pantalla(modo, tinte = null) {
+      if (prep?.pantalla) prep.pantalla.dibujar(modo, tinte);
+      else if (!externo) generico.fijarPantalla(modo, tinte);
+    },
     redimensionar,
     destruir() {
+      prep?.liberar();
+      if (externo) giro.traverse((o) => { const mm = o as Mesh; if (mm.isMesh) { mm.geometry.dispose(); (Array.isArray(mm.material) ? mm.material : [mm.material]).forEach((x) => x.dispose()); } });
       generico.liberar();
       entorno.dispose();
       renderer.dispose();

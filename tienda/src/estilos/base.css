@@ -39,7 +39,7 @@
   --r-4: 24px;
   --ancho: 1320px;
   --margen: clamp(16px, 4vw, 40px);
-  --alto-cab: 64px;
+  --alto-cab: 76px;
   --alto-barra: 34px;
   --curva: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -62,7 +62,7 @@ ul, ol { margin: 0; padding: 0; }
 :focus-visible { outline: 2px solid var(--tiza); outline-offset: 3px; border-radius: 4px; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.saltar { position: fixed; left: 12px; top: -60px; z-index: 300; background: var(--tiza); color: var(--noche); padding: 10px 14px; border-radius: var(--r-2); font-weight: 600; }
+.saltar { position: fixed; left: 12px; top: -60px; z-index: 300; background: var(--rojo); color: var(--tiza); padding: 10px 14px; border-radius: var(--r-2); font-weight: 600; }
 .saltar:focus { top: 12px; }
 
 /* ---------- Tipografía ---------- */

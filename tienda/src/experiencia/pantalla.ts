@@ -37,8 +37,11 @@ function palmera(ctx: CanvasRenderingContext2D, logo: HTMLImageElement | null, x
 
 function barraEstado(ctx: CanvasRenderingContext2D, claro = true) {
   const c = claro ? '#ffffff' : '#0a0a0a';
+  // Isla dinámica: píldora negra centrada con la cámara frontal dentro, a la derecha.
   ctx.fillStyle = '#000';
-  ctx.beginPath(); ctx.arc(ANCHO / 2, 52, 17, 0, Math.PI * 2); ctx.fill(); // cámara frontal (perforación)
+  ctx.beginPath(); ctx.roundRect(ANCHO / 2 - 108, 35, 216, 35, 18); ctx.fill();
+  ctx.fillStyle = '#101318';
+  ctx.beginPath(); ctx.arc(ANCHO / 2 + 62, 52, 10, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = c;
   ctx.font = '600 30px "Inter Variable", Inter, system-ui, sans-serif';
   ctx.textBaseline = 'middle';

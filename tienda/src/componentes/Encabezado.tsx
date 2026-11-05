@@ -6,7 +6,6 @@ import { useCarrito } from '../lib/carrito';
 import { Enlace, useRuta } from '../lib/ruta';
 import { Icono } from './Icono';
 import { Buscador } from './Buscador';
-import { INSIGNIA } from '../contenido/insignia';
 
 const SERVICIOS = [
   { a: '/retoma', texto: 'Retoma' },
@@ -53,9 +52,9 @@ export function Encabezado() {
       <header className="cab">
         <div className="contenedor cab__dentro">
           <button type="button" className="cab__icono cab__hamburguesa" onClick={() => setMenu(true)} aria-label="Abrir menú" aria-expanded={menu}><Icono nombre="menu" /></button>
-          <Enlace a="/" className="cab__marca" aria-label="SEGY, ir al inicio"><img src="/marca/logo-segy.webp" alt="SEGY" width="46" height="46" /></Enlace>
+          <Enlace a="/" className="cab__marca" aria-label="SEGY, ir al inicio"><img src="/marca/logo-segy.webp" alt="SEGY" width="56" height="56" /></Enlace>
           <nav className="cab__nav" aria-label="Principal">
-            {datos?.insignia && <Enlace a={`/producto/${datos.insignia.slug}`} aria-current={actual(`/producto/${datos.insignia.slug}`)}>{INSIGNIA.titular}</Enlace>}
+            <Enlace a="/catalogo" aria-current={actual('/catalogo')}>Catálogo</Enlace>
             {grupos.map((g) => g.clave === 'accesorios' && accesorios && accesorios.categorias.length > 1 ? (
               <div className="cab__menu" key={g.clave}>
                 <Enlace a="/catalogo/accesorios" aria-current={actual('/catalogo/accesorios')} aria-haspopup="true">{g.nombre}</Enlace>
@@ -84,7 +83,7 @@ export function Encabezado() {
             <button type="button" className="cab__icono" onClick={() => setMenu(false)} aria-label="Cerrar menú" autoFocus><Icono nombre="cerrar" /></button>
           </div>
           <nav aria-label="Menú del celular">
-            {datos?.insignia && <Enlace a={`/producto/${datos.insignia.slug}`}>{INSIGNIA.titular}</Enlace>}
+            <Enlace a="/catalogo">Catálogo</Enlace>
             {grupos.map((g) => <Enlace key={g.clave} a={`/catalogo/${g.clave}`}>{g.nombre}<small>{g.total}</small></Enlace>)}
             {SERVICIOS.map((s) => <Enlace key={s.a} a={s.a}>{s.texto}</Enlace>)}
             <Enlace a="/tienda">Visítanos</Enlace>

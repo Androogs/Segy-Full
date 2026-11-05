@@ -143,9 +143,21 @@ function categoriasPublicas(db, cfg = ajustes(db)) {
       LEFT JOIN tienda_productos tp ON tp.producto_id = p.id
       WHERE c.activo = 1 AND (p.id IS NULL OR (${condicionPublicado(cfg)}))
       GROUP BY c.id ORDER BY c.orden, c.nombre`).all();
+  // Foto de portada del grupo: el producto publicado más reciente con foto (se prefiere el que tenga stock).
+  const candidatas = db.prepare(`SELECT p.id, s.stock, c.nombre AS categoria_nombre,
+      (SELECT f.id FROM producto_fotos f WHERE f.producto_id = p.id ORDER BY f.principal DESC, f.id LIMIT 1) AS foto_id
+      FROM productos p
+      LEFT JOIN v_stock s ON s.producto_id = p.id
+      LEFT JOIN categorias c ON c.id = p.categoria_id
+      LEFT JOIN tienda_productos tp ON tp.producto_id = p.id
+      WHERE (${condicionPublicado(cfg)}) ORDER BY (s.stock > 0) DESC, p.id DESC`).all();
+  const fotoDe = (clave) => {
+    const p = candidatas.find((f) => f.foto_id && grupoDeCategoria(f.categoria_nombre) === clave);
+    return p ? urlFoto(p.foto_id) : null;
+  };
   return GRUPOS.map((g) => {
     const categorias = filas.filter((c) => grupoDeCategoria(c.nombre) === g.clave && c.total > 0).map((c) => ({ id: c.id, nombre: c.nombre, total: c.total }));
-    return { ...g, total: categorias.reduce((a, c) => a + c.total, 0), categorias };
+    return { ...g, total: categorias.reduce((a, c) => a + c.total, 0), categorias, foto: fotoDe(g.clave) };
   });
 }
 

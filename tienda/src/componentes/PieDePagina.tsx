@@ -2,6 +2,7 @@
 import { useNegocio } from '../lib/negocio';
 import { Enlace } from '../lib/ruta';
 import { enlaceWhatsApp } from '../lib/whatsapp';
+import { INSIGNIA } from '../contenido/insignia';
 
 export function PieDePagina() {
   const { datos } = useNegocio();
@@ -43,6 +44,7 @@ export function PieDePagina() {
         </div>
         <div className="pie__abajo">
           <span>© {anio} {n?.nombre || 'SEGY'}{n?.nit ? `, NIT ${n.nit}` : ''}{n?.direccion ? `. ${n.direccion}${n.ciudad ? `, ${n.ciudad}` : ''}` : ''}</span>
+          {INSIGNIA.modelo3d.url && <span>Modelo 3D del equipo: <a href="https://sketchfab.com/3d-models/iphone-17-pro-max-87fc1df741384124a8ce0226d2b2058d" target="_blank" rel="noopener">«iPhone 17 Pro Max» de MajdyModels</a>, licencia CC BY 4.0.</span>}
           {panel && <a href={panel}>Acceso del equipo</a>}
         </div>
       </div>

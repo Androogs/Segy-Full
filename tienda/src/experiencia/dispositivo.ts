@@ -1,5 +1,6 @@
 // Equipo genérico de SEGY modelado con geometría propia: cuerpo de aluminio con bordes suavizados, frente de vidrio con
-// pantalla viva, módulo de cámaras vertical, botones laterales y la palmera de SEGY grabada atrás.
+// pantalla viva, meseta de cámaras que cruza todo el ancho superior (triángulo de lentes a un lado, flash y LiDAR al
+// otro), panel de vidrio de dos tonos con la palmera de SEGY grabada, botones laterales y puerto de carga.
 // Es un modelo de presentación de la marca; para mostrar el modelo oficial de un producto se carga un GLB con licencia
 // (ver src/contenido/insignia.ts → modelo3d y public/media/LEEME.md).
 import {
@@ -70,9 +71,10 @@ export function crearDispositivo(): Dispositivo {
   const geometrias: BufferGeometry[] = [];
   const reg = <T extends BufferGeometry>(g: T): T => { geometrias.push(g); return g; };
 
-  const marco = new MeshPhysicalMaterial({ color: '#2b3650', metalness: 0.88, roughness: 0.3, clearcoat: 0.35, clearcoatRoughness: 0.25, envMapIntensity: 1.15 });
-  const espalda = new MeshPhysicalMaterial({ color: '#34415f', metalness: 0.55, roughness: 0.55, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.42 });
-  const isla = new MeshPhysicalMaterial({ color: '#34415f', metalness: 0.6, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.15, envMapIntensity: 0.6 });
+  const marco = new MeshPhysicalMaterial({ color: '#b9bcc2', metalness: 0.88, roughness: 0.3, clearcoat: 0.35, clearcoatRoughness: 0.25, envMapIntensity: 1.15 });
+  const espalda = new MeshPhysicalMaterial({ color: '#d9dadd', metalness: 0.55, roughness: 0.55, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.42 });
+  const meseta = new MeshPhysicalMaterial({ color: '#d9dadd', metalness: 0.6, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.15, envMapIntensity: 0.6 });
+  const panel = new MeshPhysicalMaterial({ color: '#e6e7ea', metalness: 0.35, roughness: 0.45, clearcoat: 0.6, clearcoatRoughness: 0.35, envMapIntensity: 0.5 });
   const vidrioFrente = new MeshPhysicalMaterial({ color: '#030303', metalness: 0, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.3 });
   const anillo = new MeshStandardMaterial({ color: '#141416', metalness: 0.92, roughness: 0.22 });
   const lente = new MeshPhysicalMaterial({ color: '#020309', metalness: 0.4, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02, iridescence: 0.25, iridescenceIOR: 1.4, envMapIntensity: 0.9 });
@@ -82,7 +84,7 @@ export function crearDispositivo(): Dispositivo {
   const materialPantalla = new MeshBasicMaterial({ map: pantalla.textura, toneMapped: false });
   // Reflejo del vidrio sobre la pantalla: material negro aditivo que solo suma los reflejos del entorno.
   const reflejo = new MeshStandardMaterial({ color: '#000000', metalness: 1, roughness: 0.1, transparent: true, blending: AdditiveBlending, depthWrite: false, envMapIntensity: 0.32 });
-  const grabado = new MeshPhysicalMaterial({ color: '#4a5778', metalness: 0.7, roughness: 0.25, transparent: true, side: DoubleSide });
+  const grabado = new MeshPhysicalMaterial({ color: '#a8aaad', metalness: 0.7, roughness: 0.25, transparent: true, side: DoubleSide });
 
   // Cuerpo: contorno redondeado extruido con bisel. Grupo 0 = caras (atrás/adelante), grupo 1 = canto (marco).
   const cuerpoGeo = reg(new ExtrudeGeometry(rectRedondeado(ANCHO - 2 * BISEL, ALTO - 2 * BISEL, RADIO - BISEL), {
@@ -103,30 +105,42 @@ export function crearDispositivo(): Dispositivo {
   capaReflejo.position.z = z0 + 0.0018;
   grupo.add(capaReflejo);
 
+  // Espalda de dos tonos: panel de vidrio más claro bajo la meseta, con la palmera grabada en el centro.
+  const panelGeo = reg(new ExtrudeGeometry(rectRedondeado(0.68, 1.2, 0.08), { depth: 0.003, bevelEnabled: true, bevelThickness: 0.002, bevelSize: 0.002, bevelSegments: 3, curveSegments: 32 }));
+  const panelMalla = new Mesh(panelGeo, panel);
+  panelMalla.rotation.y = Math.PI;
+  panelMalla.position.set(0, -0.15, -z0 + 0.004);
+  grupo.add(panelMalla);
+
   // Espalda: palmera grabada.
   const placaLogo = new Mesh(reg(new PlaneGeometry(0.4, 0.4)), grabado);
   placaLogo.rotation.y = Math.PI;
-  placaLogo.position.set(0, -0.12, -z0 - 0.0008);
+  placaLogo.position.set(0, -0.13, -z0 - 0.0022);
   grupo.add(placaLogo);
   void texturaLogo().then((t) => { if (t) { grabado.map = t; grabado.alphaMap = null; grabado.needsUpdate = true; } else placaLogo.visible = false; });
   grabado.opacity = 0; // invisible hasta que cargue la textura
   void cargarLogo().then((l) => { grabado.opacity = l ? 0.9 : 0; });
 
-  // Módulo de cámaras vertical (arriba a la izquierda vista desde atrás → +x en coordenadas del equipo).
-  const cx = ANCHO / 2 - 0.068 - 0.09; const cy = ALTO / 2 - 0.07 - 0.225;
-  const islaGeo = reg(new ExtrudeGeometry(rectRedondeado(0.17, 0.44, 0.085), { depth: 0.006, bevelEnabled: true, bevelThickness: 0.005, bevelSize: 0.005, bevelSegments: 6, curveSegments: 28 }));
-  const islaMalla = new Mesh(islaGeo, isla);
-  islaMalla.rotation.y = Math.PI;
-  islaMalla.position.set(cx, cy, -z0 + 0.003);
-  grupo.add(islaMalla);
-  const geoAnillo = reg(new CylinderGeometry(0.058, 0.06, 0.02, 48));
-  const geoLente = reg(new CylinderGeometry(0.043, 0.043, 0.004, 48));
-  for (const dy of [0.135, 0, -0.135]) {
-    const a = new Mesh(geoAnillo, anillo); a.rotation.x = Math.PI / 2; a.position.set(cx, cy + dy, -z0 - 0.018); grupo.add(a);
-    const l = new Mesh(geoLente, lente); l.rotation.x = Math.PI / 2; l.position.set(cx, cy + dy, -z0 - 0.029); grupo.add(l);
+  // Meseta de cámaras: barra horizontal que cruza todo el ancho superior. Mirando el equipo de espaldas, el triángulo
+  // de lentes queda a la izquierda (+x en coordenadas del equipo) y el flash, el micrófono y el LiDAR a la derecha.
+  const cyMes = ALTO / 2 - 0.03 - 0.15;
+  const mesetaGeo = reg(new ExtrudeGeometry(rectRedondeado(0.72, 0.3, 0.095), { depth: 0.014, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.008, bevelSegments: 8, curveSegments: 32 }));
+  const mesetaMalla = new Mesh(mesetaGeo, meseta);
+  mesetaMalla.rotation.y = Math.PI;
+  mesetaMalla.position.set(0, cyMes, -z0 + 0.004);
+  grupo.add(mesetaMalla);
+  const geoAnillo = reg(new CylinderGeometry(0.06, 0.062, 0.024, 48));
+  const geoLente = reg(new CylinderGeometry(0.045, 0.045, 0.006, 48));
+  for (const [dx, dy] of [[0.235, 0.075], [0.235, -0.075], [0.125, 0]] as [number, number][]) {
+    const a = new Mesh(geoAnillo, anillo); a.rotation.x = Math.PI / 2; a.position.set(dx, cyMes + dy, -z0 - 0.024); grupo.add(a);
+    const l = new Mesh(geoLente, lente); l.rotation.x = Math.PI / 2; l.position.set(dx, cyMes + dy, -z0 - 0.038); grupo.add(l);
   }
-  const f = new Mesh(reg(new CylinderGeometry(0.019, 0.019, 0.004, 32)), flash);
-  f.rotation.x = Math.PI / 2; f.position.set(cx - 0.135, cy + 0.15, -z0 - 0.003); grupo.add(f);
+  const f = new Mesh(reg(new CylinderGeometry(0.022, 0.022, 0.008, 32)), flash);
+  f.rotation.x = Math.PI / 2; f.position.set(-0.305, cyMes + 0.085, -z0 - 0.019); grupo.add(f);
+  const micro = new Mesh(reg(new CylinderGeometry(0.008, 0.008, 0.006, 24)), puerto);
+  micro.rotation.x = Math.PI / 2; micro.position.set(-0.305, cyMes + 0.02, -z0 - 0.019); grupo.add(micro);
+  const lidar = new Mesh(reg(new CylinderGeometry(0.033, 0.034, 0.008, 40)), lente);
+  lidar.rotation.x = Math.PI / 2; lidar.position.set(-0.305, cyMes - 0.08, -z0 - 0.019); grupo.add(lidar);
 
   // Botones laterales y puerto de carga.
   const boton = (w: number, h: number, x: number, y: number) => { const m = new Mesh(reg(new RoundedBoxGeometry(w, h, 0.03, 3, 0.006)), marco); m.position.set(x, y, 0); grupo.add(m); };
@@ -142,16 +156,18 @@ export function crearDispositivo(): Dispositivo {
     fijarAcabado(colorMarco, colorEspalda) {
       marco.color.set(colorMarco);
       espalda.color.set(colorEspalda);
-      isla.color.set(colorEspalda);
-      // Grabado: un tono más claro (acabados oscuros) o más oscuro (acabados claros) que la espalda.
+      meseta.color.set(colorEspalda);
       tono.set(colorEspalda);
       const hsl = { h: 0, s: 0, l: 0 }; tono.getHSL(hsl);
+      // Panel de vidrio: un tono más claro y menos saturado que la espalda.
+      panel.color.setHSL(hsl.h, hsl.s * 0.65, Math.min(0.92, hsl.l + 0.11));
+      // Grabado: un tono más claro (acabados oscuros) o más oscuro (acabados claros) que la espalda.
       grabado.color.setHSL(hsl.h, hsl.s * 0.8, hsl.l > 0.6 ? hsl.l - 0.14 : hsl.l + 0.12);
     },
     fijarPantalla(modo, tinte = null) { pantalla.dibujar(modo, tinte); },
     liberar() {
       geometrias.forEach((g) => g.dispose());
-      [marco, espalda, isla, vidrioFrente, anillo, lente, flash, puerto, materialPantalla, reflejo, grabado].forEach((m) => m.dispose());
+      [marco, espalda, meseta, panel, vidrioFrente, anillo, lente, flash, puerto, materialPantalla, reflejo, grabado].forEach((m) => m.dispose());
       pantalla.textura.dispose();
       grabado.map?.dispose();
     },
